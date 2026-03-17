@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlowCity — Smarter Cities Start With Smarter Commutes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --navy:      #0A1628;
+      --navy-mid:  #0F2040;
+      --navy-lite: #162b50;
+      --teal:      #00E5CC;
+      --teal-dim:  #00b5a0;
+      --amber:     #FF6B35;
+      --white:     #F0F4FF;
+      --muted:     #8899BB;
+      --card-bg:   rgba(15,32,64,0.85);
+      --border:    rgba(0,229,204,0.18);
+      --glow:      0 0 40px rgba(0,229,204,0.18);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
+    a { color: var(--teal); text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 5%;
+      background: rgba(10,22,40,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.35rem; font-weight: 800;
+      color: var(--teal); letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      color: var(--muted); font-size: 0.875rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .btn-nav {
+      background: var(--teal); color: var(--navy) !important;
+      font-weight: 700 !important; font-size: 0.875rem !important;
+      padding: 0.5rem 1.25rem; border-radius: 6px;
+      transition: background 0.2s, transform 0.15s !important;
+    }
+    .btn-nav:hover { background: #00ffdf !important; transform: translateY(-1px); }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 8rem 5% 5rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-gradient {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,229,204,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,107,53,0.08) 0%, transparent 60%),
+        var(--navy);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0; opacity: 0.07;
+      background-image:
+        linear-gradient(var(--teal) 1px, transparent 1px),
+        linear-gradient(90deg, var(--teal) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 860px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(0,229,204,0.1); border: 1px solid var(--border);
+      color: var(--teal); font-size: 0.8rem; font-weight: 600;
+      padding: 0.35rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+    h1.hero-h1 {
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 800; letter-spacing: -1px;
+      margin-bottom: 1rem;
+    }
+    h1.hero-h1 .accent { color: var(--teal); }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--muted); max-width: 620px; margin: 0 auto 2.5rem;
+      font-weight: 400;
+    }
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--teal); color: var(--navy);
+      font-family: 'Sora', sans-serif; font-weight: 700;
+      padding: 0.875rem 2rem; border-radius: 8px;
+      font-size: 0.95rem; border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 0 24px rgba(0,229,204,0.35);
+    }
+    .btn-primary:hover { background: #00ffdf; transform: translateY(-2px); box-shadow: 0 0 36px rgba(0,229,204,0.5); }
+    .btn-secondary {
+      background: transparent; color: var(--white);
+      font-family: 'Sora', sans-serif; font-weight: 600;
+      padding: 0.875rem 2rem; border-radius: 8px;
+      font-size: 0.95rem; border: 1px solid var(--border); cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--teal); background: rgba(0,229,204,0.06); }
+    .hero-stats {
+      display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+      margin-top: 4rem; padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .hero-stat-num {
+      font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800;
+      color: var(--teal);
+    }
+    .hero-stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+
+    /* ============================================================
+       SECTION SHARED
+    ============================================================ */
+    section { padding: 6rem 5%; }
+    .section-label {
+      display: inline-block;
+      color: var(--teal); font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700; letter-spacing: -0.5px; margin-bottom: 1rem;
+    }
+    .section-sub {
+      font-size: 1.05rem; color: var(--muted); max-width: 600px; margin-bottom: 3rem;
+    }
+    .center { text-align: center; }
+    .center .section-sub { margin: 0 auto 3rem; }
+
+    /* ============================================================
+       PROBLEM
+    ============================================================ */
+    #problem { background: var(--navy-mid); }
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+    }
+    .problem-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .problem-card:hover { border-color: var(--teal); transform: translateY(-4px); box-shadow: var(--glow); }
+    .problem-stat {
+      font-family: 'Sora', sans-serif; font-size: 2.8rem; font-weight: 800;
+      color: var(--amber); line-height: 1;
+    }
+    .problem-card h3 { font-size: 1rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
+    .problem-card p { font-size: 0.875rem; color: var(--muted); }
+
+    /* ============================================================
+       SOLUTION
+    ============================================================ */
+    #solution { background: var(--navy); }
+    .solution-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+      gap: 2rem; max-width: 1100px; margin: 0 auto;
+    }
+    .solution-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.5rem;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .solution-card:hover { transform: translateY(-4px); box-shadow: var(--glow); }
+    .solution-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--amber));
+      border-radius: 16px 16px 0 0;
+    }
+    .solution-icon {
+      width: 48px; height: 48px; background: rgba(0,229,204,0.12);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1.25rem;
+    }
+    .solution-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .solution-card p { font-size: 0.9rem; color: var(--muted); }
+
+    /* ============================================================
+       MARKET
+    ============================================================ */
+    #market { background: var(--navy-mid); }
+    .market-inner { max-width: 900px; margin: 0 auto; }
+    .funnel-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 2rem; }
+    .funnel-row {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; gap: 1.5rem; padding: 1.5rem 2rem;
+      border-radius: 8px; margin-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+    .funnel-row:nth-child(1) { background: rgba(0,229,204,0.18); width: 100%; }
+    .funnel-row:nth-child(2) { background: rgba(0,229,204,0.12); width: 78%; }
+    .funnel-row:nth-child(3) { background: rgba(0,229,204,0.08); width: 56%; }
+    .funnel-label { font-family: 'Sora',sans-serif; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); min-width: 50px; }
+    .funnel-value { font-family: 'Sora',sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--teal); }
+    .funnel-desc { font-size: 0.875rem; color: var(--muted); flex: 1; }
+    .market-notes {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem;
+    }
+    .market-note {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.25rem;
+    }
+    .market-note h4 { font-size: 0.875rem; font-weight: 700; color: var(--teal); margin-bottom: 0.4rem; }
+    .market-note p { font-size: 0.8rem; color: var(--muted); }
+
+    /* ============================================================
+       TRACTION
+    ============================================================ */
+    #traction { background: var(--navy); }
+    .traction-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 1.5rem; max-width: 900px; margin: 0 auto;
+    }
+    .traction-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem; text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .traction-card:hover { transform: translateY(-4px); border-color: var(--teal); }
+    .traction-num {
+      font-family: 'Sora', sans-serif; font-size: 2.5rem; font-weight: 800;
+      color: var(--teal);
+    }
+    .traction-num .unit { font-size: 1.4rem; }
+    .traction-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
+    .traction-timeline {
+      max-width: 800px; margin: 3rem auto 0;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+    }
+    .traction-timeline h3 { font-size: 0.85rem; color: var(--teal); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem; }
+    .roadmap-row {
+      display: grid; grid-template-columns: 90px 1fr;
+      gap: 1rem; margin-bottom: 1.25rem; align-items: start;
+    }
+    .roadmap-year {
+      font-family: 'Sora', sans-serif; font-size: 0.85rem; font-weight: 700;
+      color: var(--teal); padding-top: 2px;
+    }
+    .roadmap-content { font-size: 0.875rem; color: var(--muted); }
+    .roadmap-content strong { color: var(--white); display: block; margin-bottom: 0.15rem; }
+
+    /* ============================================================
+       BUSINESS MODEL
+    ============================================================ */
+    #model { background: var(--navy-mid); }
+    .model-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap: 1.5rem; max-width: 1000px; margin: 0 auto;
+    }
+    .model-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .model-card:hover { transform: translateY(-4px); border-color: var(--teal); }
+    .model-tag {
+      display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+    .tag-freemium { background: rgba(0,229,204,0.15); color: var(--teal); }
+    .tag-enterprise { background: rgba(255,107,53,0.15); color: var(--amber); }
+    .tag-data { background: rgba(100,120,200,0.15); color: #8ab4f8; }
+    .model-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .model-card p { font-size: 0.875rem; color: var(--muted); }
+    .model-arpu {
+      font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 800;
+      color: var(--white); margin-top: 1rem;
+    }
+    .model-arpu span { font-size: 0.8rem; color: var(--muted); font-weight: 400; font-family: 'Inter',sans-serif; }
+
+    /* ============================================================
+       TEAM
+    ============================================================ */
+    #team { background: var(--navy); }
+    .team-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap: 1.5rem; max-width: 900px; margin: 0 auto;
+    }
+    .team-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .team-card:hover { transform: translateY(-4px); border-color: var(--teal); }
+    .team-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--amber));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800;
+      color: var(--navy); margin-bottom: 1rem;
+    }
+    .team-card h3 { font-size: 1rem; font-weight: 700; }
+    .team-card .title { font-size: 0.8rem; color: var(--teal); font-weight: 600; margin: 0.2rem 0 0.75rem; }
+    .team-card p { font-size: 0.8rem; color: var(--muted); }
+
+    /* ============================================================
+       INVESTORS SOCIAL PROOF
+    ============================================================ */
+    #social-proof {
+      background: var(--navy-mid);
+      text-align: center; padding: 4rem 5%;
+    }
+    .proof-strip {
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+      gap: 1.5rem 3rem; margin-top: 2rem;
+    }
+    .proof-item {
+      font-size: 0.8rem; color: var(--muted); font-weight: 500;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .proof-item::before { content: '✓'; color: var(--teal); font-weight: 700; font-size: 1rem; }
+
+    /* ============================================================
+       CTA FOOTER
+    ============================================================ */
+    #cta {
+      background: linear-gradient(135deg, var(--navy-lite) 0%, var(--navy) 100%);
+      text-align: center; padding: 7rem 5%;
+      position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(0,229,204,0.1) 0%, transparent 70%);
+    }
+    #cta > * { position: relative; z-index: 1; }
+    #cta h2 { font-size: clamp(2rem,4vw,3rem); font-weight: 800; margin-bottom: 1rem; }
+    #cta p { font-size: 1.05rem; color: var(--muted); margin-bottom: 2.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-outline-teal {
+      background: transparent; color: var(--teal);
+      font-family: 'Sora', sans-serif; font-weight: 600;
+      padding: 0.875rem 2rem; border-radius: 8px;
+      font-size: 0.95rem; border: 1px solid var(--teal); cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-outline-teal:hover { background: rgba(0,229,204,0.1); }
+    footer {
+      background: var(--navy); border-top: 1px solid var(--border);
+      padding: 2rem 5%; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo { font-family: 'Sora', sans-serif; font-weight: 800; color: var(--teal); font-size: 1.1rem; }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+
+    /* ============================================================
+       FADE-IN ON SCROLL
+    ============================================================ */
+    .fade-in {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ============================================================
+       MOBILE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-stats { gap: 1.5rem; }
+      .funnel-row:nth-child(2), .funnel-row:nth-child(3) { width: 100%; }
+      .market-notes { grid-template-columns: 1fr; }
+      .roadmap-row { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav>
+  <div class="nav-logo">Flow<span>City</span></div>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#solution">Solution</a>
+    <a href="#market">Market</a>
+    <a href="#traction">Traction</a>
+    <a href="#team">Team</a>
+    <a href="#cta" class="btn-nav">Book Demo</a>
+  </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section id="hero">
+  <div class="hero-gradient"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content fade-in">
+    <div class="hero-badge"><span class="dot"></span> Seed Round Open — Q2 2026</div>
+    <h1 class="hero-h1">Smarter Cities Start With<br><span class="accent">Smarter Commutes</span></h1>
+    <p class="hero-sub">FlowCity is India's first AI-powered multimodal urban mobility platform — unifying metro, bus, bike, and ride-share into one predictive intelligence layer.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Book a Demo →</button>
+      <button class="btn-secondary" onclick="document.getElementById('solution').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num" data-count="27">0</div>
+        <div class="hero-stat-label">Min recovered per commute</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" data-count="2300">0</div>
+        <div class="hero-stat-label">Beta users · Bengaluru</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" data-count="6">0</div>
+        <div class="hero-stat-label">Mobility partners integrated</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">₹6Cr</div>
+        <div class="hero-stat-label">Projected Y1 ARR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROBLEM ========== -->
+<section id="problem">
+  <div class="center fade-in">
+    <span class="section-label">The Problem</span>
+    <h2 class="section-title">Indian cities are paralysed.<br>The data is damning.</h2>
+    <p class="section-sub">Urban commuters in India's megacities aren't losing time to traffic alone — they're losing it to fragmented, incompatible transit systems with no single intelligent layer.</p>
+  </div>
+  <div class="problem-grid fade-in">
+    <div class="problem-card">
+      <div class="problem-stat">73 min</div>
+      <h3>Average one-way commute in Bengaluru</h3>
+      <p>Up from 54 minutes in 2019 — despite metro expansion. The problem is coordination, not capacity.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-stat">3.2×</div>
+      <h3>Apps checked per single journey</h3>
+      <p>Google Maps. BMTC app. Namma Metro site. A WhatsApp group for the last mile. This is the norm.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-stat">₹1.2Cr</div>
+      <h3>Annual productivity loss per 100 employees</h3>
+      <p>Corporate HR teams bear the brunt — employee attrition driven by commute frustration costs more than solving it.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-stat">0</div>
+      <h3>Existing solutions with proprietary data</h3>
+      <p>Every current player depends on public APIs that fail 18% of monthly uptime. No one owns the data layer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SOLUTION ========== -->
+<section id="solution">
+  <div class="center fade-in">
+    <span class="section-label">The Solution</span>
+    <h2 class="section-title">FlowCity: The Urban<br>Mobility Intelligence Layer</h2>
+    <p class="section-sub">Not another navigation app. A proprietary data infrastructure that makes every city smarter, every commute faster, and every transit decision greener.</p>
+  </div>
+  <div class="solution-grid fade-in">
+    <div class="solution-card">
+      <div class="solution-icon">🧠</div>
+      <h3>AI Route Intelligence</h3>
+      <p>ML engine predicts congestion 20 minutes before it forms. Assembles the fastest multimodal route across metro, bus, e-bike, and ride-share — in real time. Accuracy within 8% of actual travel time.</p>
+    </div>
+    <div class="solution-card">
+      <div class="solution-icon">🌿</div>
+      <h3>Green Score System</h3>
+      <p>Gamified carbon footprint tracking with redeemable discounts at 40+ city partner brands. Users who commute sustainably earn points — and companies who adopt FlowCity reduce their Scope 3 emissions footprint.</p>
+    </div>
+    <div class="solution-card">
+      <div class="solution-icon">🏢</div>
+      <h3>Enterprise Dashboard</h3>
+      <p>B2B commute intelligence product for corporate campuses. HR teams get real-time fleet analytics, employee commute health scores, and transit optimization recommendations. Currently piloting at 3 Bengaluru tech parks.</p>
+    </div>
+    <div class="solution-card">
+      <div class="solution-icon">📡</div>
+      <h3>Proprietary IoT Sensing Network</h3>
+      <p>200 micro-sensors deployed at key transit junctions generating occupancy and flow data no public API can provide. This is the moat. 18 months of proprietary data creates a 2–3 year advantage over any new entrant.</p>
+    </div>
+    <div class="solution-card">
+      <div class="solution-icon">📴</div>
+      <h3>Offline-First Architecture</h3>
+      <p>Built for real Indian infrastructure. Core routing works on 2G/3G connections. Downloaded route packages work with zero connectivity — critical for tunnels, basement parking, and Tier-2 city expansion.</p>
+    </div>
+    <div class="solution-card">
+      <div class="solution-icon">🏆</div>
+      <h3>Commute Leaderboard</h3>
+      <p>Weekly company-wide rankings of who saved the most carbon and time via FlowCity routes. Drives organic word-of-mouth, LinkedIn sharing, and zero-cost enterprise user acquisition through competitive gamification.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== MARKET ========== -->
+<section id="market">
+  <div class="market-inner">
+    <div class="center fade-in">
+      <span class="section-label">Market Opportunity</span>
+      <h2 class="section-title">The infrastructure layer for<br>India's 416M new urban residents</h2>
+      <p class="section-sub">India will add more urban residents by 2050 than any country on earth. FlowCity is building the mobility intelligence stack for that transition — starting with the highest-value B2B segment.</p>
+    </div>
+    <div class="funnel-wrap fade-in">
+      <div class="funnel-row">
+        <div class="funnel-label">TAM</div>
+        <div class="funnel-value">$180B</div>
+        <div class="funnel-desc">Total India urban mobility market — ride-hailing, transit, MaaS, and city data services</div>
+      </div>
+      <div class="funnel-row">
+        <div class="funnel-label">SAM</div>
+        <div class="funnel-value">₹2,400 Cr</div>
+        <div class="funnel-desc">Corporate commute management in Tier-1 cities: 400K eligible employees × ₹500/month</div>
+      </div>
+      <div class="funnel-row">
+        <div class="funnel-label">SOM</div>
+        <div class="funnel-value">₹72 Cr</div>
+        <div class="funnel-desc">Year 3 target: 60 enterprise clients, 200K users, City Data API, Series B trigger</div>
+      </div>
+    </div>
+    <div class="market-notes fade-in">
+      <div class="market-note">
+        <h4>Why Now?</h4>
+        <p>ONDC-enabled transit API ecosystem matured in 2024–25. India's DPDP Act 2023 creates data localization moat. Gig economy expanding: 15M+ delivery workers with zero mobility infrastructure support.</p>
+      </div>
+      <div class="market-note">
+        <h4>Why Us?</h4>
+        <p>First to deploy proprietary IoT sensing network at transit junctions. 18 months ahead on data. Enterprise SaaS go-to-market bypasses consumer acquisition costs. Team has ex-BMTC operations, ML mobility, and enterprise SaaS sales DNA.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TRACTION ========== -->
+<section id="traction">
+  <div class="center fade-in">
+    <span class="section-label">Traction</span>
+    <h2 class="section-title">Real numbers. Real users.<br>Real enterprise pilots.</h2>
+    <p class="section-sub">6-week closed beta in Bengaluru produced results that validate every core assumption — route accuracy, user retention, and enterprise willingness-to-pay.</p>
+  </div>
+  <div class="traction-grid fade-in">
+    <div class="traction-card">
+      <div class="traction-num"><span class="counter" data-target="2300">0</span><span class="unit">+</span></div>
+      <div class="traction-label">Beta Users</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num"><span class="counter" data-target="27">0</span><span class="unit"> min</span></div>
+      <div class="traction-label">Avg. Commute Time Saved Daily</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num"><span class="counter" data-target="6">0</span></div>
+      <div class="traction-label">Mobility Partners Integrated</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num"><span class="counter" data-target="92">0</span><span class="unit">%</span></div>
+      <div class="traction-label">30-Day Retention Rate</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num"><span class="counter" data-target="3">0</span></div>
+      <div class="traction-label">Enterprise Pilots Live</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num"><span class="counter" data-target="58">0</span></div>
+      <div class="traction-label">Net Promoter Score</div>
+    </div>
+  </div>
+  <div class="traction-timeline fade-in">
+    <h3>3-Year Roadmap</h3>
+    <div class="roadmap-row">
+      <div class="roadmap-year">Y1 · 2026</div>
+      <div class="roadmap-content"><strong>Foundation: Prove the model</strong>3 enterprise clients · 10K users · ₹6Cr ARR · 50 sensors deployed in Bengaluru · Series A raise of $4M</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-year">Y2 · 2027</div>
+      <div class="roadmap-content"><strong>Scale: Expand geography and revenue streams</strong>25 enterprise clients · 80K users · ₹28Cr ARR · 200 sensors · 1 city data contract · Mumbai + Pune launch</div>
+    </div>
+    <div class="roadmap-row">
+      <div class="roadmap-year">Y3 · 2028</div>
+      <div class="roadmap-content"><strong>Dominance: Become the city infrastructure layer</strong>60 enterprise clients · 200K users · ₹72Cr ARR · Gig economy product launch · Series B trigger · Pan-India coverage</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BUSINESS MODEL ========== -->
+<section id="model">
+  <div class="center fade-in">
+    <span class="section-label">Business Model</span>
+    <h2 class="section-title">Three compounding<br>revenue engines</h2>
+    <p class="section-sub">Designed to generate near-term B2B cash flow while building long-term data asset value. No dependency on consumer advertising or commission.</p>
+  </div>
+  <div class="model-grid fade-in">
+    <div class="model-card">
+      <span class="model-tag tag-freemium">Consumer · Freemium</span>
+      <h3>FlowCity Premium</h3>
+      <p>Free tier with basic routing. ₹199/month premium unlocks predictive congestion alerts, saved routes, and Green Score rewards. Corporate plan at ₹149/month per seat.</p>
+      <div class="model-arpu">₹199<span>/user/month</span></div>
+    </div>
+    <div class="model-card">
+      <span class="model-tag tag-enterprise">Enterprise · SaaS</span>
+      <h3>Corporate Commute Intelligence</h3>
+      <p>HR and operations dashboard for tech parks and large employers. Real-time fleet analytics, ESG reporting, employee commute health scores. Minimum contract: 500 employees.</p>
+      <div class="model-arpu">₹500<span>/employee/month</span></div>
+    </div>
+    <div class="model-card">
+      <span class="model-tag tag-data">Data · API</span>
+      <h3>City Intelligence API</h3>
+      <p>Proprietary sensor-derived congestion and flow data sold to city planners, logistics companies, urban consultants, insurance providers, and World Bank / ADB infrastructure projects.</p>
+      <div class="model-arpu">₹25L–₹1Cr<span>/contract/year</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TEAM ========== -->
+<section id="team">
+  <div class="center fade-in">
+    <span class="section-label">Team</span>
+    <h2 class="section-title">Built by people who've<br>run these systems.</h2>
+    <p class="section-sub">FlowCity's founding team combines city transit operations, AI/ML engineering, and enterprise SaaS sales — the exact DNA required to win this market.</p>
+  </div>
+  <div class="team-grid fade-in">
+    <div class="team-card">
+      <div class="team-avatar">AM</div>
+      <h3>Arjun Mehta</h3>
+      <div class="title">CEO & Co-founder</div>
+      <p>Former Strategy Director at BMTC. MBA from IIM Bengaluru. 8 years in urban mobility policy and transit operations. Led Bengaluru's integrated mobility plan (2021).</p>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">PP</div>
+      <h3>Priya Patel</h3>
+      <div class="title">CTO & Co-founder</div>
+      <p>Ex-Ola ML Engineering (5 years). Built the core demand prediction models serving 4M daily rides. MS Computer Science, IIT Bombay. Published researcher in mobility AI.</p>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">RS</div>
+      <h3>Rahul Sharma</h3>
+      <div class="title">VP Enterprise Sales</div>
+      <p>Previously Head of Enterprise at Razorpay (0 to ₹50Cr ARR). Sold Zoho suite to 200+ corporate accounts across South India. Deep relationships with Manyata, Embassy, RMZ Corp.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SOCIAL PROOF ========== -->
+<section id="social-proof">
+  <div class="fade-in">
+    <p class="section-label">Why investors and partners trust FlowCity</p>
+    <div class="proof-strip">
+      <div class="proof-item">Integrated with Namma Metro & BMTC</div>
+      <div class="proof-item">3 tech park enterprise pilots live</div>
+      <div class="proof-item">92% 30-day user retention in beta</div>
+      <div class="proof-item">NPS of 58 — above industry average</div>
+      <div class="proof-item">Proprietary IoT data since Q4 2025</div>
+      <div class="proof-item">DPDP Act compliant data architecture</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section id="cta">
+  <h2>Ready to rethink your city?</h2>
+  <p>We're raising a $4M Seed round to scale the sensor network, close 10 enterprise pilots, and launch in Mumbai. Let's talk.</p>
+  <div class="cta-btns">
+    <button class="btn-primary" onclick="alert('Thank you for your interest! In a real deployment, this would open a Calendly booking for a 20-minute demo.')">Book a 20-Min Demo</button>
+    <button class="btn-outline-teal" onclick="alert('Download FlowCity — live on the App Store and Google Play in Bengaluru.')">Download the App</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">FlowCity</div>
+  <div class="footer-copy">© 2026 FlowCity Technologies Pvt. Ltd. · Bengaluru, India · contact@flowcity.in</div>
+</footer>
+
+<script>
+  // Fade-in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Counter animation
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target);
+    const duration = 1800;
+    const start = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target).toLocaleString('en-IN');
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.counter').forEach(animateCounter);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('#hero, #traction').forEach(s => counterObserver.observe(s));
+
+  // Also animate hero data-count elements
+  const heroObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('[data-count]').forEach(el => {
+          const target = parseInt(el.dataset.count);
+          const duration = 1800;
+          const start = performance.now();
+          function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(eased * target).toLocaleString('en-IN');
+            if (progress < 1) requestAnimationFrame(update);
+          }
+          requestAnimationFrame(update);
+        });
+        heroObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  heroObserver.observe(document.getElementById('hero'));
+</script>
+</body>
+</html>
